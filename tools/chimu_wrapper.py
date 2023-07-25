@@ -65,7 +65,7 @@ class Chimu:
         for url in urls:
             r = self.session.get(url)
             result = json.loads(r.text)
-            if result["code"] == 0:
+            if r.status_code == 200:
                 data += result["data"]
             else:
                 break
