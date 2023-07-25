@@ -30,9 +30,7 @@ class Chimu:
             url = self.url + "set/" + str(beatmapsetID)
             r = self.session.get(url)
             data = json.loads(r.text)
-            if data["data"]:
-                return data["data"]
-            return {}
+            return data
 
     # fetches a beatmap dictionary object from chimu.moe
     def fetch_beatmap(self, beatmapID):
@@ -40,9 +38,7 @@ class Chimu:
             url = self.url + "map/" + str(beatmapID)
             r = self.session.get(url)
             data = json.loads(r.text)
-            if data["data"]:
-                return data["data"]
-            return {}
+            return data
 
     def fetch_parent_set(self, beatmapID):
         beatmap = self.fetch_beatmap(beatmapID)
