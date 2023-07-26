@@ -483,7 +483,7 @@ class Game(Channel):
                     if self.__allow_unsubmitted and not beatmap:
                         beatmap = {"id": beatmapID, "url": "https://osu.ppy.sh/b/" + str(beatmapID)}
                         accept_beatmap = True
-                        self.send_message("Can't check attributes, the selected beatmap is unsubmitted! " + "[" + str(self._bot.chimu.fetch_download_link(beatmapID, False)) + " Chimu.moe download]")
+                        self.send_message("Can't check attributes, the selected beatmap is unsubmitted! " + "[" + str(self._bot.chimu.fetch_download_link(beatmapID, True)) + " Chimu.moe download]")
                     else:
                         error = self.check_beatmap(beatmap)
                         if error:
@@ -507,7 +507,7 @@ class Game(Channel):
                 else:
                     if not beatmap:
                         beatmap = {"id": beatmapID, "url": "https://osu.ppy.sh/b/" + str(beatmapID)}
-                        self.send_message("The selected beatmap is unsubmitted! " + "[" + str(self._bot.chimu.fetch_download_link(beatmapID, False)) + " Chimu.moe download]")
+                        self.send_message("The selected beatmap is unsubmitted! " + "[" + str(self._bot.chimu.fetch_download_link(beatmapID, True)) + " Chimu.moe download]")
                     accept_beatmap = True
 
             if accept_beatmap:

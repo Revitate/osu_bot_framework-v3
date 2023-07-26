@@ -13,6 +13,7 @@ from requests.structures import CaseInsensitiveDict
 from tools.broadcast_controller import BroadcastController
 from channel import Channel
 from tools.chimu_wrapper import Chimu
+from tools.beatconnect_wrapper import Beatconnect
 from game import Game
 from socket_wrapper import Sock
 from tools.logger import Logger
@@ -45,6 +46,7 @@ class Bot:
         self.__player_blacklist = []
         self.__osu_directory = ""
         self.chimu = Chimu(self)
+        self.beatconnect = Beatconnect(self)
         self.__logger = Logger("config" + os.sep + "logs" + os.sep + str(datetime.now()).replace(" ", "_", 1).replace(":", "-").split(".", 1)[0] + ".txt", "a", encoding="utf8")
         self.logging = logging
         self.verbose = verbose

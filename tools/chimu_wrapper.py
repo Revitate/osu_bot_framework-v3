@@ -30,7 +30,8 @@ class Chimu:
             url = self.url + "set/" + str(beatmapsetID)
             r = self.session.get(url)
             data = json.loads(r.text)
-            return data
+            if r.status_code == 200:
+                return data
 
     # fetches a beatmap dictionary object from chimu.moe
     def fetch_beatmap(self, beatmapID):
@@ -38,7 +39,8 @@ class Chimu:
             url = self.url + "map/" + str(beatmapID)
             r = self.session.get(url)
             data = json.loads(r.text)
-            return data
+            if r.status_code == 200:
+                return data
 
     def fetch_parent_set(self, beatmapID):
         beatmap = self.fetch_beatmap(beatmapID)
@@ -73,8 +75,7 @@ class Chimu:
 
     # beatmapset download link
     def fetch_set_download_link(self, beatmapsetID, with_video=False):
-        if self.fetch_beatmapset(beatmapsetID):
-            return "https://api.chimu.moe/v1/download/" + str(beatmapsetID) + "?n=" + str(int(with_video))
+        return "https://api.chimu.moe/v1/download/" + str(beatmapsetID) + "?n=" + str(int(with_video))
 
     # beatmap download link
     def fetch_download_link(self, beatmapID, with_video=False):
@@ -82,7 +83,7 @@ class Chimu:
         if beatmap:
             beatmapsetID = beatmap["ParentSetId"]
             return "https://api.chimu.moe/v1/download/" + str(beatmapsetID) + "?n=" + str(int(with_video))
-
+        
     # can only download with chimu
     # downloads a beatmapset to the path given, or in the framework directory
     # opening on completion will open it with the default program (osu) and deletes the file on import

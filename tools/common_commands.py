@@ -50,9 +50,14 @@ class CommonCommands:
             self.channel.send_message("This command is only available to the host or referees.")
 
     def altlink(self, message):
-        link = self.bot.chimu.fetch_download_link(self.channel.get_beatmap()["id"])
-        if link:
-            self.channel.send_message("An alternate download link is available [" + link + " here]")
+        beatmap = self.bot.chimu.fetch_beatmap(self.channel.get_beatmap()["id"])
+        if beatmap:
+            beatmapsetID = beatmap["ParentSetId"]
+            beatmapName = beatmap["OsuFile"].removesuffix(".osu")
+            if beatmapsetID:
+                chimuLink = self.bot.chimu.fetch_set_download_link(beatmapsetID)
+                beatconnectLink = self.bot.beatconnect.fetch_set_download_link(beatmapsetID)
+                self.channel.send_message(beatmapName + " [" + chimuLink + " chimu.moe] [" + beatconnectLink + " beatconnect.io]")
         else:
             self.channel.send_message("Sorry chimu.moe doesn't store this beatmap!")
 
