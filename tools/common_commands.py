@@ -55,9 +55,9 @@ class CommonCommands:
             beatmapsetID = beatmap["ParentSetId"]
             beatmapName = beatmap["OsuFile"].removesuffix(".osu")
             if beatmapsetID:
-                chimuLink = self.bot.chimu.fetch_set_download_link(beatmapsetID)
+                chimuLink = self.bot.chimu.fetch_set_download_link(beatmapsetID, True)
                 beatconnectLink = self.bot.beatconnect.fetch_set_download_link(beatmapsetID)
-                self.channel.send_message(beatmapName + " [" + chimuLink + " chimu.moe] [" + beatconnectLink + " beatconnect.io]")
+                self.channel.send_message(beatmapName + " | Download>>[[" + chimuLink + " chimu] | [" + beatconnectLink + " beatconnect]]")
         else:
             self.channel.send_message("Sorry chimu.moe doesn't store this beatmap!")
 
