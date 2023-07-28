@@ -57,7 +57,7 @@ class CommonCommands:
             if beatmapsetID:
                 chimuLink = self.bot.chimu.fetch_set_download_link(beatmapsetID, True)
                 beatconnectLink = self.bot.beatconnect.fetch_set_download_link(beatmapsetID)
-                self.channel.send_message(beatmapName + " | Download>>[[" + chimuLink + " chimu] | [" + beatconnectLink + " beatconnect]]")
+                self.channel.send_message(beatmapName + " | Download>>[" + chimuLink + " chimu] | [" + beatconnectLink + " beatconnect]")
         else:
             self.channel.send_message("Sorry chimu.moe doesn't store this beatmap!")
 
