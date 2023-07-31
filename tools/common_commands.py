@@ -59,10 +59,10 @@ class CommonCommands:
             self.channel.send_message("This command is only available to the host or referees.")
 
     def altlink(self, message):
-        beatmap = self.bot.chimu.fetch_beatmap(self.channel.get_beatmap()["id"])
-        if beatmap:
-            beatmapsetID = beatmap["ParentSetId"]
-            _beatmapName = beatmap["OsuFile"].removesuffix(".osu")
+        beatmapset = self.bot.fetch_parent_set(self.channel.get_beatmap()["id"])
+        if beatmapset["id"]:
+            beatmapsetID = beatmapset["id"]
+            _beatmapName = beatmapset["title"]
             beatmapName = (_beatmapName[:75] + '..') if len(_beatmapName) > 75 else _beatmapName
             if beatmapsetID:
                 chimuLink = self.bot.chimu.fetch_set_download_link(beatmapsetID, True)
