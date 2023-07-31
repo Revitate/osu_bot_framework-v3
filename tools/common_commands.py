@@ -721,11 +721,12 @@ class CommonCommands:
         calc = Calculator(mode=mode_number, mods=mods_number)
         perfomance = calc.performance(beatmap_pp['beatmap'])
         difficulty = perfomance.difficulty
+        attributes = calc.map_attributes(beatmap_pp['beatmap'])
 
         response = "Mode: "+ mode + " | Mods: " + ('-' if len(mods) == 0 else ','.join(mods)) + " | stars: " +str(round(difficulty.stars,2)) + " | combo: "+str(difficulty.max_combo)
 
         if mode == 'osu':
-            response = response + " | aim: " + str(round(difficulty.aim,2)) + " | speed: " + str(round(difficulty.speed,2)) + " | fl: " + str(round(difficulty.flashlight,2)) + " | slider factor: " + str(round(difficulty.slider_factor,2)) + " | speed note: " + str(round(difficulty.speed_note_count,2)) + " | ar: " + str(round(difficulty.ar,2)) + " | od: " + str(round(difficulty.od,2)) + " | pp: " + str(round(perfomance.pp)) + ' | pp acc: ' + str(round(perfomance.pp_acc)) + ' | pp aim: ' + str(round(perfomance.pp_aim)) + ' | pp speed: ' + str(round(perfomance.pp_speed)) + ' | pp fl: ' + str(round(perfomance.pp_flashlight))
+            response = response + " | aim: " + str(round(difficulty.aim,2)) + " | speed: " + str(round(difficulty.speed,2)) + " | fl: " + str(round(difficulty.flashlight,2)) + " | slider factor: " + str(round(difficulty.slider_factor,2)) + " | speed note: " + str(round(difficulty.speed_note_count,2)) + " | ar: " + str(round(attributes.ar,2)) + " | cs: " + str(round(attributes.od,2)) + " | od: " + str(round(attributes.od,2)) + " | hp: " + str(round(attributes.hp,2)) + " | bmp: " + str(round(attributes.bmp,2)) + " | pp: " + str(round(perfomance.pp)) + ' | pp acc: ' + str(round(perfomance.pp_acc)) + ' | pp aim: ' + str(round(perfomance.pp_aim)) + ' | pp speed: ' + str(round(perfomance.pp_speed)) + ' | pp fl: ' + str(round(perfomance.pp_flashlight))
         else:
             response = response + " | pp: " + str(round(perfomance.pp))
         
