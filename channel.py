@@ -208,12 +208,13 @@ class Channel:
         if self.is_game():
             self._commands = {
                 "!info": {
-                "response": "built with [https://github.com/jramseygreen/osu_bot_framework-v3 osu_bot_framework v3] | [https://osu.ppy.sh/u/qqzzy Developer]",
-                "description": "built with osu_bot_framework v3"
+                    "response": "built with [https://github.com/jramseygreen/osu_bot_framework-v3 osu_bot_framework v3] | [https://osu.ppy.sh/u/qqzzy Developer]",
+                    "description": "built with osu_bot_framework v3"
                 },
-            "!config": {
-                "response": self.common_commands.config_link,
-                "description": "Returns a link to the game rom configuration page"}
+                "!config": {
+                    "response": self.common_commands.config_link,
+                    "description": "Returns a link to the game rom configuration page"
+                }
             }
         else:
             self._commands = {}

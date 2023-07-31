@@ -1,7 +1,10 @@
 import random
 import time
+from rosu_pp_py import Beatmap, Calculator
+import requests
 
-from GAME_ATTR import GAME_ATTR
+from GAME_ATTR import GAME_ATTR, MODE
+from MODS_BITWISE import MODS, MODS_BITWISE
 
 
 def is_number(string):
@@ -18,6 +21,13 @@ class CommonCommands:
         self.bot = bot
         self.channel = channel
         self.fights = {}
+        self.session = requests.Session()
+        self.__beatmap_pp = {
+            "id": None,
+            "beatmap": None,
+            "attributes": None,
+            "difficulty": None,
+        }
 
     def config_link(self, message):
         self.channel.send_message("The configuration of the game room and available commands can be viewed [" + self.channel.get_config_link() + " here]")
@@ -53,13 +63,15 @@ class CommonCommands:
         beatmap = self.bot.chimu.fetch_beatmap(self.channel.get_beatmap()["id"])
         if beatmap:
             beatmapsetID = beatmap["ParentSetId"]
-            beatmapName = beatmap["OsuFile"].removesuffix(".osu")
+            _beatmapName = beatmap["OsuFile"].removesuffix(".osu")
+            beatmapName = (_beatmapName[:75] + '..') if len(_beatmapName) > 75 else _beatmapName
             if beatmapsetID:
                 chimuLink = self.bot.chimu.fetch_set_download_link(beatmapsetID, True)
                 beatconnectLink = self.bot.beatconnect.fetch_set_download_link(beatmapsetID)
-                self.channel.send_message(beatmapName + " | Download>> [" + chimuLink + " chimu] | [" + beatconnectLink + " beatconnect]")
+                nerinyanLink = self.bot.nerinyan.fetch_set_download_link(beatmapsetID)
+                self.channel.send_message(beatmapName + " | [" + chimuLink + " chimu] | [" + beatconnectLink + " beatconnect] | [" + nerinyanLink + " nerinyan]")
         else:
-            self.channel.send_message("Sorry chimu.moe doesn't store this beatmap!")
+            self.channel.send_message("Sorry, not found this beatmap!")
 
     def ar_range(self, message):
         if self.channel.has_referee(message["username"]):
@@ -660,3 +672,55 @@ class CommonCommands:
             if message["username"] not in self.fights:
                 self.fights[message["username"]] = 0
             self.channel.send_message(message["username"] + " has defeated " + str(self.fights[message["username"]]) + " opponents.")
+
+    def calculate_pp(self,message):
+        command = message["content"].split(" ", 1)[0]
+        args = message["content"].replace(command, "", 1).strip().split(" ")
+        beatmap = self.channel.get_beatmap()
+        if self.__beatmap_pp['id'] != beatmap['id']:
+            r = self.session.get("https://osu.ppy.sh/osu/" + str(beatmap['id']))
+            if r.ok:
+                osu_beatmap = Beatmap(content=r.content)
+                calc = Calculator()
+                self.__beatmap_pp = {
+                    'id': beatmap['id'],
+                    'beatmap': osu_beatmap,
+                    'attributes': calc.map_attributes(osu_beatmap),
+                    'difficulty': calc.difficulty(osu_beatmap),
+                }
+            else:
+                self.channel.send_message("Error calcurating beatmap")
+                return
+        mode_number = self.__beatmap_pp['attributes'].mode
+        mode = MODE[mode_number]
+        mods = []
+
+        for arg in args:
+            if (arg):
+                arg_lower = arg.lower()
+                arg_upper = arg.upper()
+                if arg_lower in MODE:
+                    mode_number = MODE.index(arg_lower)
+                    mode = arg_lower
+                elif arg_upper in MODS:
+                    mods.append(arg_upper)
+                else:
+                    self.channel.send_message("Unrecognised argument: " + arg)
+                    return
+
+        mods_number = 0
+        for mod in mods:
+            mods_number = mods_number | MODS_BITWISE[mod]
+        calc = Calculator(mode=mode_number, mods=mods_number, difficulty=self.__beatmap_pp['difficulty'])
+        perfomance = calc.performance(self.__beatmap_pp['beatmap'])
+
+        response = "Game mode: "+ mode + " | Mods: " + ('-' if len(mods) == 0 else ','.join(mods))
+
+        if mode == 'osu':
+            response = response + " | pp: " + str(round(perfomance.pp)) + ' | pp acc: ' + str(round(perfomance.pp_acc)) + ' | pp aim: ' + str(round(perfomance.pp_aim)) + ' | pp speed: ' + str(round(perfomance.pp_speed)) + ' | pp fl: ' + str(round(perfomance.pp_flashlight))
+        else:
+            response = response + " | pp: " + str(round(perfomance.pp))
+        
+        self.channel.send_message(response)
+        
+
