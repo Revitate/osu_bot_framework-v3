@@ -26,7 +26,6 @@ class CommonCommands:
             "id": None,
             "beatmap": None,
             "attributes": None,
-            "difficulty": None,
         }
 
     def config_link(self, message):
@@ -673,9 +672,7 @@ class CommonCommands:
                 self.fights[message["username"]] = 0
             self.channel.send_message(message["username"] + " has defeated " + str(self.fights[message["username"]]) + " opponents.")
 
-    def calculate_pp(self,message):
-        command = message["content"].split(" ", 1)[0]
-        args = message["content"].replace(command, "", 1).strip().split(" ")
+    def _get_osu_beatmap(self):
         beatmap = self.channel.get_beatmap()
         if self.__beatmap_pp['id'] != beatmap['id']:
             r = self.session.get("https://osu.ppy.sh/osu/" + str(beatmap['id']))
@@ -686,12 +683,22 @@ class CommonCommands:
                     'id': beatmap['id'],
                     'beatmap': osu_beatmap,
                     'attributes': calc.map_attributes(osu_beatmap),
-                    'difficulty': calc.difficulty(osu_beatmap),
                 }
             else:
-                self.channel.send_message("Error calcurating beatmap")
                 return
-        mode_number = self.__beatmap_pp['attributes'].mode
+        return self.__beatmap_pp
+
+
+    def calculate_pp(self,message):
+        command = message["content"].split(" ", 1)[0]
+        args = message["content"].replace(command, "", 1).strip().split(" ")
+        beatmap_pp = self._get_osu_beatmap()
+
+        if not beatmap_pp:
+            self.channel.send_message("Error calcurating beatmap")
+            return
+        
+        mode_number = beatmap_pp['attributes'].mode
         mode = MODE[mode_number]
         mods = []
 
@@ -711,16 +718,15 @@ class CommonCommands:
         mods_number = 0
         for mod in mods:
             mods_number = mods_number | MODS_BITWISE[mod]
-        calc = Calculator(mode=mode_number, mods=mods_number, difficulty=self.__beatmap_pp['difficulty'])
-        perfomance = calc.performance(self.__beatmap_pp['beatmap'])
+        calc = Calculator(mode=mode_number, mods=mods_number)
+        perfomance = calc.performance(beatmap_pp['beatmap'])
+        difficulty = perfomance.difficulty
 
-        response = "Mode: "+ mode + " | Mods: " + ('-' if len(mods) == 0 else ','.join(mods))
+        response = "Mode: "+ mode + " | Mods: " + ('-' if len(mods) == 0 else ','.join(mods)) + " | stars: " +str(round(difficulty.stars,2)) + " | combo: "+str(difficulty.max_combo)
 
         if mode == 'osu':
-            response = response + " | pp: " + str(round(perfomance.pp)) + ' | pp acc: ' + str(round(perfomance.pp_acc)) + ' | pp aim: ' + str(round(perfomance.pp_aim)) + ' | pp speed: ' + str(round(perfomance.pp_speed)) + ' | pp fl: ' + str(round(perfomance.pp_flashlight))
+            response = response + " | aim: " + str(round(difficulty.aim,2)) + " | speed: " + str(round(difficulty.speed,2)) + " | fl: " + str(round(difficulty.flashlight,2)) + " | slider factor: " + str(round(difficulty.slider_factor,2)) + " | speed note: " + str(round(difficulty.speed_note_count,2)) + " | ar: " + str(round(difficulty.ar,2)) + " | od: " + str(round(difficulty.od,2)) + " | pp: " + str(round(perfomance.pp)) + ' | pp acc: ' + str(round(perfomance.pp_acc)) + ' | pp aim: ' + str(round(perfomance.pp_aim)) + ' | pp speed: ' + str(round(perfomance.pp_speed)) + ' | pp fl: ' + str(round(perfomance.pp_flashlight))
         else:
             response = response + " | pp: " + str(round(perfomance.pp))
         
         self.channel.send_message(response)
-        
-
