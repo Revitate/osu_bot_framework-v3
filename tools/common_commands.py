@@ -714,7 +714,7 @@ class CommonCommands:
         calc = Calculator(mode=mode_number, mods=mods_number, difficulty=self.__beatmap_pp['difficulty'])
         perfomance = calc.performance(self.__beatmap_pp['beatmap'])
 
-        response = "Game mode: "+ mode + " | Mods: " + ('-' if len(mods) == 0 else ','.join(mods))
+        response = "Mode: "+ mode + " | Mods: " + ('-' if len(mods) == 0 else ','.join(mods))
 
         if mode == 'osu':
             response = response + " | pp: " + str(round(perfomance.pp)) + ' | pp acc: ' + str(round(perfomance.pp_acc)) + ' | pp aim: ' + str(round(perfomance.pp_aim)) + ' | pp speed: ' + str(round(perfomance.pp_speed)) + ' | pp fl: ' + str(round(perfomance.pp_flashlight))
