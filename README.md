@@ -64,7 +64,7 @@ If you want to get right into the action, click on the `make room` or `join chan
 
 > For clarification: When you make a room, you create a real lobby in the osu! multiplayer where anyone can join. If you make too many of them bancho will not allow you to make more. Don't forget to close them via `Close room` button in the channel options, as it takes some time for them to close on their own after an inactivity period.
 
-![here](webapp/assets/images/make_a_room.PNG)
+![here](webapp/assets/images/Make_a_room.PNG)
 
 As you can see, there are lots of initial options on what kind of lobby to make.
 
@@ -75,7 +75,7 @@ As you can see, there are lots of initial options on what kind of lobby to make.
 3. ###### Team type & Score type
     Nothing fancy, these work the same way they do in normal osu! multiplayer.
 4. ###### Beatmap ID
-    Pick the first beatmap you want to display in the lobby. (Beatmap ID can be obtained like this:) ![this](webapp/assets/images/Beatmap_ID.png)
+    Pick the first beatmap you want to display in the lobby. (Beatmap ID can be obtained like this:) ![this](webapp/assets/images/Beatmap_ID.PNG)
 5. ###### Logic profile
     You can choose your desired logic profile for the lobby. There are quite a few premade and you can find out more about them in the Logic profiles section. For now just know that logic profiles are what determines how the lobby works e.g. who gets the host, what are the conditions to get the host, what are the conditions to play a beatmap, how does picking a beatmap work and much more!
 6. ###### Room size
