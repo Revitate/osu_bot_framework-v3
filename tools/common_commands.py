@@ -68,7 +68,8 @@ class CommonCommands:
                 chimuLink = self.bot.chimu.fetch_set_download_link(beatmapsetID, True)
                 beatconnectLink = self.bot.beatconnect.fetch_set_download_link(beatmapsetID)
                 nerinyanLink = self.bot.nerinyan.fetch_set_download_link(beatmapsetID)
-                self.channel.send_message(beatmapName + " | [" + chimuLink + " chimu] | [" + beatconnectLink + " beatconnect] | [" + nerinyanLink + " nerinyan]")
+                osudirectLink = self.bot.osudirect.fetch_set_download_link(beatmapsetID)
+                self.channel.send_message(beatmapName + " | [" + chimuLink + " chimu] | [" + beatconnectLink + " beatconnect] | [" + nerinyanLink + " nerinyan] | [" + osudirectLink + " osu.direct]")
         else:
             self.channel.send_message("Sorry, not found this beatmap!")
 
