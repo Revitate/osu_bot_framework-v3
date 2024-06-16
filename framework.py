@@ -15,6 +15,7 @@ from channel import Channel
 from tools.chimu_wrapper import Chimu
 from tools.beatconnect_wrapper import Beatconnect
 from tools.nerinyan_wrapper import Nerinyan
+from tools.osudirect_wrapper import OsuDirect
 from game import Game
 from socket_wrapper import Sock
 from tools.logger import Logger
@@ -22,6 +23,7 @@ from webapp.controller import Controller
 #import requests
 import cloudscraper
 
+from bs4 import BeautifulSoup
 
 class Bot:
     def __init__(self, username="", password="", host="irc.ppy.sh", port=6667, server_ip="localhost", message_log_length=50, logging=False, verbose=False):
@@ -49,6 +51,7 @@ class Bot:
         self.chimu = Chimu(self)
         self.beatconnect = Beatconnect(self)
         self.nerinyan = Nerinyan(self)
+        self.osudirect = OsuDirect(self)
         self.__logger = Logger("config" + os.sep + "logs" + os.sep + str(datetime.now()).replace(" ", "_", 1).replace(":", "-").split(".", 1)[0] + ".txt", "a", encoding="utf8")
         self.logging = logging
         self.verbose = verbose
@@ -456,21 +459,23 @@ class Bot:
 
         username = username.replace(" ", "%20")
         url = "https://osu.ppy.sh/users/" + username
+        def has_data_initial_data(tag):
+            return tag.has_attr('data-initial-data')
         try:
             r = requests.get(url)
-            count = 0
-            # for a in html.unescape(r.text).split('"user":'):
-            #     print(str(count) + ": " + a)
-            #     count += 1
-            #
-            # print()
-            return json.loads(html.unescape(r.text).split('"user":')[-1].split('}"\n', 1)[0])
+            page = BeautifulSoup(r.text, "html.parser")
+            div = page.find(has_data_initial_data)
+            data = json.loads(html.unescape(div.attrs["data-initial-data"]))
+            return data['user']
         except:
             try:
                 url = "https://osu.ppy.sh/users/" + username.replace("_", "%20")
-                r = requests.get(url)
-                return json.loads(html.unescape(r.text).split('"user":')[-1].split('}"\n', 1)[0])
-            except:
+                page = BeautifulSoup(r.text, "html.parser")
+                div = page.find(has_data_initial_data)
+                data = json.loads(html.unescape(div.attrs["data-initial-data"]))
+                return data['user']
+            except Exception as err:
+                print(err)
                 return {}
 
     def set_websocket_port(self, port):
